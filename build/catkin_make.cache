@@ -1,0 +1,2 @@
+um482_ros_wrapper
+-DCATKIN_DEVEL_PREFIX=/home/uav/serialPort/devel -DCMAKE_INSTALL_PREFIX=/home/uav/serialPort/install -G Unix Makefiles

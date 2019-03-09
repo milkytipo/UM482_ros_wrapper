@@ -1,0 +1,15 @@
+gnss_port:  "/dev/ttyUSB0"
+gnss_Baudrate: 115200
+
+
+gpgga_enable: true
+gptra_enable: true
+bestxyza_enable: true
+Unlogall_enable: false
+
+gpgga_freq: 1
+gptra_freq: 1
+bestxyza_freq: 1 
+
+
+

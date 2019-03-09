@@ -1,0 +1,8 @@
+prefix=/home/uav/serialPort/install
+
+Name: um482_ros_wrapper
+Description: Description of um482_ros_wrapper
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/uav/serialPort/install/lib 
+Requires: 
