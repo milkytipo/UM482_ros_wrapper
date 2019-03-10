@@ -11,8 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   serial
   std_msgs
+  nmea_msgs
+  nav_msgs
+  sensor_msgs
 )
-
+find_package(Eigen3 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -118,6 +121,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_LIBS}
 )
 
 ## Declare a C++ library
@@ -197,7 +201,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-add_executable(um482_ros_wrapper_node src/serialPort.cpp) 
+add_executable(um482_ros_wrapper_node src/main.cpp) 
 
 add_dependencies(um482_ros_wrapper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
 
