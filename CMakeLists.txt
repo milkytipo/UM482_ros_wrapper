@@ -7,6 +7,7 @@ project(um482_ros_wrapper)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   serial
@@ -16,30 +17,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs 
 )
 
-find_package(Eigen3 REQUIRED)
-
-catkin_package(
-	CATKIN_DEPENDS
-		roscpp
-		serial
-		std_msgs
-		nmea_msgs
-		nav_msgs
-		sensor_msgs 
-
-)
-#  INCLUDE_DIRS include
-#  LIBRARIES serialPort
-#  CATKIN_DEPENDS roscpp serial std_msgs
-#  DEPENDS system_lib
-
-
-
-
 include_directories(
-# include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_LIBS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 
