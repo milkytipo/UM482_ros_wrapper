@@ -219,14 +219,14 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 	return;
 }
 
-void writeCallback(const std_msgs::String::ConstPtr& msg) 
-{ 
-    ROS_INFO_STREAM("Writing to serial port  " <<msg->data); 
+// void writeCallback(const std_msgs::String::ConstPtr& msg) 
+// { 
+//     ROS_INFO_STREAM("Writing to serial port  " <<msg->data); 
     
-    ser.write(msg->data); //发送串口数据 
+//     ser.write(msg->data+ "\r\n"); //发送串口数据 
 
-    cout << msg->data << endl;
-}
+//     cout << msg->data << endl;
+// }
 
 
 int main (int argc, char** argv) { 
@@ -252,7 +252,7 @@ int main (int argc, char** argv) {
 	param_nh.param("bestxyza_freq",bestxyza_freq,1);
 
 
-	ros::Subscriber write_sub = nh.subscribe("writeToSerial", 1, writeCallback); 
+	// ros::Subscriber write_sub = nh.subscribe("writeToSerial", 1, writeCallback); 
 
 
 	ros::Publisher read_pub = nh.advertise<nmea_msgs::Gpgga>("gpgga", 1); 
@@ -286,19 +286,16 @@ int main (int argc, char** argv) {
 
 	if(gpgga_enable)
 	{	
-
-
-	    ser.write("log com1 gpgga ontime"+numToString(gpgga_freq)+"\r\n"); //发送串口数据 
+	    ser.write("log com1 gpgga ontime "+numToString(gpgga_freq)+"\r\n"); //发送串口数据 
 	}
 
 	if(gptra_enable)
 	{
-
-	    ser.write("log com1 gptra ontime"+numToString(gptra_freq)+"\r\n"); //发送串口数据 
+	    ser.write("log com1 gptra ontime "+numToString(gptra_freq)+"\r\n"); //发送串口数据 
 	}
 	if(bestxyza_enable)
 	{
-	    ser.write("log com1 bestxyza ontime"+numToString(bestxyza_freq)+"\r\n"); //发送串口数据 
+	    ser.write("log com1 bestxyza ontime "+numToString(bestxyza_freq)+"\r\n"); //发送串口数据 
 	}
 	if(Unlogall_enable)
 	{

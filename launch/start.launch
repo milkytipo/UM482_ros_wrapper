@@ -1,5 +1,5 @@
 <launch>
-   <arg name = "gnss_port" default = "/dev/ttyUSB0"/>
+   <arg name = "gnss_port" default = "/dev/ttyS1"/>
    <arg name = "gnss_module" default = "UM482"/>
    <arg name = "gnss_frame_id" default = "gnss"/>
 
