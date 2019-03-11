@@ -3,8 +3,8 @@
    <arg name = "gnss_module" default = "UM482"/>
    <arg name = "gnss_frame_id" default = "gnss"/>
 
-   <node name="$(arg gnss_frame_id)" pkg = "um482_ros_wrapper" type= "um482_ros_wrapper_node" output="screen" >
-	<rosparam command = "load" file = "$(find um482_ros_wrapper)/$(arg gnss_module).yaml"/>
+   <node name="gnssrtk_node" pkg = "um482_ros_wrapper" type= "gnssrtk_node" output="screen" >
+	  <rosparam command = "load" file = "$(find um482_ros_wrapper)/$(arg gnss_module).yaml"/>
    </node>
 
 </launch>

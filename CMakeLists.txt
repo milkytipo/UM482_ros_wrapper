@@ -17,17 +17,31 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs 
 )
 
+catkin_package(
+#  INCLUDE_DIRS include
+   CATKIN_DEPENDS  
+#    message_runtime 
+    nmea_msgs
+    nav_msgs
+    sensor_msgs
+    serial
+#  DEPENDS system_lib
+)
 include_directories(
+  .
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
 
 
-add_executable(um482_ros_wrapper_node src/main.cpp) 
+add_executable( gnssrtk_node 
+  src/main.cpp
+) 
 
-add_dependencies(um482_ros_wrapper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
+#add_dependencies(gnssrtk_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
 
-target_link_libraries(um482_ros_wrapper_node 
+target_link_libraries( gnssrtk_node 
   ${catkin_LIBRARIES}
-  udev)
+  udev
+)
 
