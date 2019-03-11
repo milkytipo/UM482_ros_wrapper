@@ -7,6 +7,7 @@ project(um482_ros_wrapper)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   serial
@@ -15,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
 )
-find_package(Eigen3 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -121,7 +121,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_LIBS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
