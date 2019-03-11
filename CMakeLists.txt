@@ -27,5 +27,7 @@ add_executable(um482_ros_wrapper_node src/main.cpp)
 
 add_dependencies(um482_ros_wrapper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
 
-target_link_libraries(um482_ros_wrapper_node ${catkin_LIBRARIES} )
+target_link_libraries(um482_ros_wrapper_node 
+  ${catkin_LIBRARIES}
+  udev)
 
