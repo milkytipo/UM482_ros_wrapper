@@ -65,7 +65,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 	if (strcmp(serialHeader.c_str(),ggaHeader[0].c_str()) == 0)  //GPGGA
 	{	
-		cout << serialHeader.c_str() << endl;
+		// cout << serialHeader.c_str() << endl;
 
 		for(int i=1;i<=gpgga.totalCommas-1;i++)
 		{			
@@ -118,7 +118,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 	}else if (strcmp(serialHeader.c_str(),ggaHeader[1].c_str()) == 0) //BESTXYZA
 	{
-		cout << serialHeader.c_str() << endl;	
+		// cout << serialHeader.c_str() << endl;	
 
 		for(int i=1;i<=bestxyza.totalCommas-1;i++)
 		{			
@@ -140,13 +140,17 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		std::vector<float> v2(36,0);
 
 		temp_bestxyza.assign(serial_data,separator_pos[13]+1 ,separator_pos[14]-separator_pos[13]-1);  //std variance x in ECEF
-	    msg_gnssodometry.pose.covariance[0] = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.covariance[0] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza) ; 
+		msg_navsatfix.position_covariance[0] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+
 
 		temp_bestxyza.assign(serial_data,separator_pos[14]+1 ,separator_pos[15]-separator_pos[14]-1);  //std variance y in ECEF
-	    msg_gnssodometry.pose.covariance[7] = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.covariance[7] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+	    msg_navsatfix.position_covariance[4] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[15]+1 ,separator_pos[16]-separator_pos[15]-1);  //std variance z in ECEF
-	    msg_gnssodometry.pose.covariance[14] = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.covariance[14] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+	    msg_navsatfix.position_covariance[8] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza);
 
 		temp_bestxyza.assign(serial_data,separator_pos[18]+1 ,separator_pos[19]-separator_pos[18]-1);  //vx in ECEF
 		msg_gnssodometry.twist.twist.linear.x = stringToNum<float>(temp_bestxyza); 
@@ -158,18 +162,14 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		msg_gnssodometry.twist.twist.linear.z = stringToNum<float>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[21]+1 ,separator_pos[22]-separator_pos[21]-1);  //std variance vx in ECEF
-		msg_gnssodometry.twist.covariance[0]= stringToNum<float>(temp_bestxyza); 
-		msg_navsatfix.position_covariance[0] = stringToNum<float>(temp_bestxyza); 
-
+		msg_gnssodometry.twist.covariance[0]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[22]+1 ,separator_pos[23]-separator_pos[22]-1);  //std variance vy in ECEF
-		msg_gnssodometry.twist.covariance[7]= stringToNum<float>(temp_bestxyza); 
-		msg_navsatfix.position_covariance[4] = stringToNum<float>(temp_bestxyza); 
-
+		msg_gnssodometry.twist.covariance[7]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+	
 		temp_bestxyza.assign(serial_data,separator_pos[23]+1 ,separator_pos[24]-separator_pos[23]-1);  //std variance vz in ECEF
-		msg_gnssodometry.twist.covariance[14]= stringToNum<float>(temp_bestxyza);	
-		msg_navsatfix.position_covariance[8] = stringToNum<float>(temp_bestxyza);
-
+		msg_gnssodometry.twist.covariance[14]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza);	
+	
 	    msg_navsatfix.position_covariance_type = 3;
 
 	}else if (strcmp(serialHeader.c_str(),ggaHeader[2].c_str()) == 0)   //GPTRA
@@ -286,15 +286,18 @@ int main (int argc, char** argv) {
 
 	if(gpgga_enable)
 	{	
+		cout << "GPGGA enable" << endl;
 	    ser.write("log com1 gpgga ontime "+numToString(gpgga_freq)+"\r\n"); //发送串口数据 
 	}
 
 	if(gptra_enable)
 	{
-	    ser.write("log com1 gptra ontime "+numToString(gptra_freq)+"\r\n"); //发送串口数据 
+		cout << "GPTRA enable" << endl;
+	    ser.write("log com1 gptra onchanged\r\n"); //发送串口数据 
 	}
 	if(bestxyza_enable)
 	{
+		cout << "BESTXYZA enable" << endl;
 	    ser.write("log com1 bestxyza ontime "+numToString(bestxyza_freq)+"\r\n"); //发送串口数据 
 	}
 	if(Unlogall_enable)
@@ -311,7 +314,7 @@ int main (int argc, char** argv) {
 		if(ser.available())
 		{ 
 
-			ROS_INFO_STREAM("Reading from serial port\n"); 
+			// ROS_INFO_STREAM("Reading from serial port\n"); 
 
 			vector<std::string> vs;
 			nmea_msgs::Gpgga msg_gpgga;
