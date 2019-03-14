@@ -183,45 +183,31 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		string temp_gptra;
 		temp_gptra.assign(serial_data,separator_pos[1]+1 ,separator_pos[2]-separator_pos[1]-1);
-    if (!temp_gptra.empty())
-    {
-		  float gnss_heading = stringToNum<float>(temp_gptra) / 180 * PI;
+	  float gnss_heading = stringToNum<float>(temp_gptra) / 180 * PI;
 
-		  temp_gptra.assign(serial_data,separator_pos[2]+1 ,separator_pos[3]-separator_pos[2]-1);
-		  float gnss_pitch= stringToNum<float>(temp_gptra) / 180 * PI;
+	  temp_gptra.assign(serial_data,separator_pos[2]+1 ,separator_pos[3]-separator_pos[2]-1);
+	  float gnss_pitch= stringToNum<float>(temp_gptra) / 180 * PI;
 
-		  temp_gptra.assign(serial_data,separator_pos[3]+1 ,separator_pos[4]-separator_pos[3]-1);
-		  float gnss_roll= stringToNum<float>(temp_gptra) / 180 * PI;
+	  temp_gptra.assign(serial_data,separator_pos[3]+1 ,separator_pos[4]-separator_pos[3]-1);
+	  float gnss_roll= stringToNum<float>(temp_gptra) / 180 * PI;
 
-		  Eigen::Vector3d ea0(gnss_heading,gnss_pitch,gnss_roll);
-	      Eigen::Matrix3d R;
-      	R = Eigen::AngleAxisd(ea0[0], ::Eigen::Vector3d::UnitZ())
-          * Eigen::AngleAxisd(ea0[1], ::Eigen::Vector3d::UnitY())
-          * Eigen::AngleAxisd(ea0[2], ::Eigen::Vector3d::UnitX());
+	  Eigen::Vector3d ea0(gnss_heading,gnss_pitch,gnss_roll);
+      Eigen::Matrix3d R;
+    	R = Eigen::AngleAxisd(ea0[0], ::Eigen::Vector3d::UnitZ())
+        * Eigen::AngleAxisd(ea0[1], ::Eigen::Vector3d::UnitY())
+        * Eigen::AngleAxisd(ea0[2], ::Eigen::Vector3d::UnitX());
 
-          Eigen::Quaterniond q;
-          q = R;    
-	      cout << q.x() << endl << endl;
-	      cout << q.y() << endl << endl;
-	      cout << q.z() << endl << endl;
-	      cout << q.w() << endl << endl;
+        Eigen::Quaterniond q;
+        q = R;    
+      cout << q.x() << endl << endl;
+      cout << q.y() << endl << endl;
+      cout << q.z() << endl << endl;
+      cout << q.w() << endl << endl;
 
-	      msg_gnssodometry.pose.pose.orientation.x = q.x();
-	      msg_gnssodometry.pose.pose.orientation.y = q.y();
-	      msg_gnssodometry.pose.pose.orientation.z = q.z();
-	      msg_gnssodometry.pose.pose.orientation.w = q.w();
-    }
-    else
-    {
-      msg_gnssodometry.pose.pose.orientation.x = 0.0;
-      msg_gnssodometry.pose.pose.orientation.y = 0.0;
-      msg_gnssodometry.pose.pose.orientation.z = 0.0;
-      msg_gnssodometry.pose.pose.orientation.w = 1.0;
-      msg_gnssodometry.pose.covariance[21] = -1;
-      msg_gnssodometry.pose.covariance[28] = -1;
-      msg_gnssodometry.pose.covariance[35] = -1;
-    }
-
+      msg_gnssodometry.pose.pose.orientation.x = q.x();
+      msg_gnssodometry.pose.pose.orientation.y = q.y();
+      msg_gnssodometry.pose.pose.orientation.z = q.z();
+      msg_gnssodometry.pose.pose.orientation.w = q.w();
 		// Eigen::Matrix3d Rx = q.toRotationMatrix();
 	 //    Eigen::Vector3d ea1 = Rx.eulerAngles(2,1,0);     
   //   	cout << ea1/PI*180 - ea0 << endl << endl;
@@ -343,12 +329,28 @@ int main (int argc, char** argv) {
 				// cout<<"read contents: " << vs[i] <<endl;
 				gpggaManager(msg_gpgga,msg_gnssodometry,msg_navsatfix,vs[i]);
 			}
-			
-			read_pub.publish(msg_gpgga); 
+      
+      // shitty version of message check. TODO(wzd): make a smarter version; fill in the msg_navsatfix's statue.
+			if(msg_gpgga.num_sats != 0) read_pub.publish(msg_gpgga); 
 
-			read_pub2.publish(msg_gnssodometry); 
+			if(msg_gnssodometry.pose.pose.position.x != 0 && msg_gnssodometry.pose.pose.position.y != 0)
+      {
+        if( msg_gnssodometry.pose.pose.orientation.x == 0 && 
+            msg_gnssodometry.pose.pose.orientation.y == 0 && 
+            msg_gnssodometry.pose.pose.orientation.z == 0 && 
+            msg_gnssodometry.pose.pose.orientation.w == 0)
+        {
+            msg_gnssodometry.pose.covariance[21] = -1;
+            msg_gnssodometry.pose.covariance[28] = -1;
+            msg_gnssodometry.pose.covariance[35] = -1;
+        }
+        read_pub2.publish(msg_gnssodometry); 
+      }
 
-			read_pub3.publish(msg_navsatfix);
+			if(msg_navsatfix.position_covariance[0] != 0)
+      {
+        read_pub3.publish(msg_navsatfix);
+      }
 
 			ser.flush();
 
