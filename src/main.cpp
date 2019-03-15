@@ -92,7 +92,8 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		gpgga_msg.lon_dir = temp_gpgga.assign(serial_data,separator_pos[4]+1 ,separator_pos[5]-separator_pos[4]-1);
 
 		temp_gpgga.assign(serial_data,separator_pos[5]+1 ,separator_pos[6]-separator_pos[5]-1);
-		gpgga_msg.gps_qual = stringToNum<int>(temp_gpgga);
+		gpgga_msg.gps_qual = stringToNum<int>(temp_gpgga);//0初始化， 1单点定位， 2码差分， 3无效PPS， 4固定解， 5浮点解， 6正在估算 
+
 
 		temp_gpgga.assign(serial_data,separator_pos[6]+1 ,separator_pos[7]-separator_pos[6]-1);
 		gpgga_msg.num_sats = stringToNum<int>(temp_gpgga);	
@@ -128,6 +129,15 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		msg_gnssodometry.header.frame_id = "gnss";
 
 		string temp_bestxyza;
+		temp_bestxyza.assign(serial_data,separator_pos[8]+1 ,separator_pos[9]-separator_pos[8]-1);  //x in ECEF
+		if(strcmp(temp_bestxyza.c_str(),"0;SOL_COMPUTED") == 0)
+		{
+			msg_navsatfix.status.status = 0;
+		}else
+		{
+			msg_navsatfix.status.status = -1;
+		}
+
 
 		temp_bestxyza.assign(serial_data,separator_pos[10]+1 ,separator_pos[11]-separator_pos[10]-1);  //x in ECEF
 	    msg_gnssodometry.pose.pose.position.x = stringToNum<float>(temp_bestxyza); 
@@ -137,7 +147,6 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		temp_bestxyza.assign(serial_data,separator_pos[12]+1 ,separator_pos[13]-separator_pos[12]-1);  //z in ECEF
 	    msg_gnssodometry.pose.pose.position.z = stringToNum<float>(temp_bestxyza); 
-		std::vector<float> v2(36,0);
 
 		temp_bestxyza.assign(serial_data,separator_pos[13]+1 ,separator_pos[14]-separator_pos[13]-1);  //std variance x in ECEF
 	    msg_gnssodometry.pose.covariance[0] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza) ; 
@@ -329,28 +338,16 @@ int main (int argc, char** argv) {
 				// cout<<"read contents: " << vs[i] <<endl;
 				gpggaManager(msg_gpgga,msg_gnssodometry,msg_navsatfix,vs[i]);
 			}
+
+			if(msg_navsatfix.status.status == 0){
       
-      // shitty version of message check. TODO(wzd): make a smarter version; fill in the msg_navsatfix's statue.
-			if(msg_gpgga.num_sats != 0) read_pub.publish(msg_gpgga); 
+				read_pub.publish(msg_gpgga);
 
-			if(msg_gnssodometry.pose.pose.position.x != 0 && msg_gnssodometry.pose.pose.position.y != 0)
-      {
-        if( msg_gnssodometry.pose.pose.orientation.x == 0 && 
-            msg_gnssodometry.pose.pose.orientation.y == 0 && 
-            msg_gnssodometry.pose.pose.orientation.z == 0 && 
-            msg_gnssodometry.pose.pose.orientation.w == 0)
-        {
-            msg_gnssodometry.pose.covariance[21] = -1;
-            msg_gnssodometry.pose.covariance[28] = -1;
-            msg_gnssodometry.pose.covariance[35] = -1;
-        }
-        read_pub2.publish(msg_gnssodometry); 
-      }
+       			read_pub2.publish(msg_gnssodometry); 
 
-			if(msg_navsatfix.position_covariance[0] != 0)
-      {
-        read_pub3.publish(msg_navsatfix);
-      }
+        		read_pub3.publish(msg_navsatfix);
+        	}
+
 
 			ser.flush();
 
