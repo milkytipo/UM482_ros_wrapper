@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs 
 )
-
 catkin_package(
 #  INCLUDE_DIRS include
    CATKIN_DEPENDS  
@@ -27,6 +26,7 @@ catkin_package(
     serial
 #  DEPENDS system_lib
 )
+
 include_directories(
   .
   ${catkin_INCLUDE_DIRS}
@@ -39,7 +39,6 @@ add_executable( gnssrtk_node
 ) 
 
 #add_dependencies(gnssrtk_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) 
-
 target_link_libraries( gnssrtk_node 
   ${catkin_LIBRARIES}
   udev

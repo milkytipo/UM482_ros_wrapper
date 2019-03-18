@@ -77,17 +77,17 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		string temp_gpgga;
 		temp_gpgga.assign(serial_data,separator_pos[0]+1 ,separator_pos[1]-separator_pos[0]-1);
-		gpgga_msg.utc_seconds = stringToNum<float>(temp_gpgga);
+		gpgga_msg.utc_seconds = stringToNum<double>(temp_gpgga);
 
 		temp_gpgga.assign(serial_data,separator_pos[1]+1 ,separator_pos[2]-separator_pos[1]-1);
-		gpgga_msg.lat = stringToNum<float>(temp_gpgga);
-		msg_navsatfix.latitude = stringToNum<float>(temp_gpgga);
+		gpgga_msg.lat = stringToNum<double>(temp_gpgga);
+		msg_navsatfix.latitude = stringToNum<double>(temp_gpgga);
 
 		gpgga_msg.lat_dir = temp_gpgga.assign(serial_data,separator_pos[2]+1 ,separator_pos[3]-separator_pos[2]-1);
 
 		temp_gpgga.assign(serial_data,separator_pos[3]+1 ,separator_pos[4]-separator_pos[3]-1);
-		gpgga_msg.lon = stringToNum<float>(temp_gpgga);
-		msg_navsatfix.longitude = stringToNum<float>(temp_gpgga);
+		gpgga_msg.lon = stringToNum<double>(temp_gpgga);
+		msg_navsatfix.longitude = stringToNum<double>(temp_gpgga);
 
 		gpgga_msg.lon_dir = temp_gpgga.assign(serial_data,separator_pos[4]+1 ,separator_pos[5]-separator_pos[4]-1);
 
@@ -99,16 +99,16 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		gpgga_msg.num_sats = stringToNum<int>(temp_gpgga);	
 
 		temp_gpgga.assign(serial_data,separator_pos[7]+1 ,separator_pos[8]-separator_pos[7]-1);
-		gpgga_msg.hdop = stringToNum<float>(temp_gpgga);	
+		gpgga_msg.hdop = stringToNum<double>(temp_gpgga);	
 
 		temp_gpgga.assign(serial_data,separator_pos[8]+1 ,separator_pos[9]-separator_pos[3]-1);
-		gpgga_msg.alt = stringToNum<float>(temp_gpgga);
-		msg_navsatfix.altitude = stringToNum<float>(temp_gpgga);
+		gpgga_msg.alt = stringToNum<double>(temp_gpgga);
+		msg_navsatfix.altitude = stringToNum<double>(temp_gpgga);
 
 		gpgga_msg.altitude_units = temp_gpgga.assign(serial_data,separator_pos[9]+1 ,separator_pos[10]-separator_pos[9]-1);
 
 		temp_gpgga.assign(serial_data,separator_pos[10]+1 ,separator_pos[11]-separator_pos[10]-1);//error of horizonal level
-		gpgga_msg.undulation = stringToNum<float>(temp_gpgga);
+		gpgga_msg.undulation = stringToNum<double>(temp_gpgga);
 
 		gpgga_msg.undulation_units = temp_gpgga.assign(serial_data,separator_pos[11]+1 ,separator_pos[12]-separator_pos[11]-1);
 
@@ -140,44 +140,44 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 
 		temp_bestxyza.assign(serial_data,separator_pos[10]+1 ,separator_pos[11]-separator_pos[10]-1);  //x in ECEF
-	    msg_gnssodometry.pose.pose.position.x = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.pose.position.x = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[11]+1 ,separator_pos[12]-separator_pos[11]-1);  //y in ECEF
-	    msg_gnssodometry.pose.pose.position.y = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.pose.position.y = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[12]+1 ,separator_pos[13]-separator_pos[12]-1);  //z in ECEF
-	    msg_gnssodometry.pose.pose.position.z = stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.pose.position.z = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[13]+1 ,separator_pos[14]-separator_pos[13]-1);  //std variance x in ECEF
-	    msg_gnssodometry.pose.covariance[0] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza) ; 
-		msg_navsatfix.position_covariance[0] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.covariance[0] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza) ; 
+		msg_navsatfix.position_covariance[0] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
 
 
 		temp_bestxyza.assign(serial_data,separator_pos[14]+1 ,separator_pos[15]-separator_pos[14]-1);  //std variance y in ECEF
-	    msg_gnssodometry.pose.covariance[7] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
-	    msg_navsatfix.position_covariance[4] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+	    msg_gnssodometry.pose.covariance[7] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
+	    msg_navsatfix.position_covariance[4] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[15]+1 ,separator_pos[16]-separator_pos[15]-1);  //std variance z in ECEF
-	    msg_gnssodometry.pose.covariance[14] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
-	    msg_navsatfix.position_covariance[8] = stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza);
+	    msg_gnssodometry.pose.covariance[14] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
+	    msg_navsatfix.position_covariance[8] = stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza);
 
 		temp_bestxyza.assign(serial_data,separator_pos[18]+1 ,separator_pos[19]-separator_pos[18]-1);  //vx in ECEF
-		msg_gnssodometry.twist.twist.linear.x = stringToNum<float>(temp_bestxyza); 
+		msg_gnssodometry.twist.twist.linear.x = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[19]+1 ,separator_pos[20]-separator_pos[19]-1);  //vy in ECEF
-		msg_gnssodometry.twist.twist.linear.y = stringToNum<float>(temp_bestxyza); 
+		msg_gnssodometry.twist.twist.linear.y = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[20]+1 ,separator_pos[21]-separator_pos[20]-1);  //vz in ECEF
-		msg_gnssodometry.twist.twist.linear.z = stringToNum<float>(temp_bestxyza); 
+		msg_gnssodometry.twist.twist.linear.z = stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[21]+1 ,separator_pos[22]-separator_pos[21]-1);  //std variance vx in ECEF
-		msg_gnssodometry.twist.covariance[0]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+		msg_gnssodometry.twist.covariance[0]= stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
 
 		temp_bestxyza.assign(serial_data,separator_pos[22]+1 ,separator_pos[23]-separator_pos[22]-1);  //std variance vy in ECEF
-		msg_gnssodometry.twist.covariance[7]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza); 
+		msg_gnssodometry.twist.covariance[7]= stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza); 
 	
 		temp_bestxyza.assign(serial_data,separator_pos[23]+1 ,separator_pos[24]-separator_pos[23]-1);  //std variance vz in ECEF
-		msg_gnssodometry.twist.covariance[14]= stringToNum<float>(temp_bestxyza) * stringToNum<float>(temp_bestxyza);	
+		msg_gnssodometry.twist.covariance[14]= stringToNum<double>(temp_bestxyza) * stringToNum<double>(temp_bestxyza);	
 	
 	    msg_navsatfix.position_covariance_type = 3;
 
@@ -192,13 +192,13 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		string temp_gptra;
 		temp_gptra.assign(serial_data,separator_pos[1]+1 ,separator_pos[2]-separator_pos[1]-1);
-	  float gnss_heading = stringToNum<float>(temp_gptra) / 180 * PI;
+	  double gnss_heading = stringToNum<double>(temp_gptra) / 180 * PI;
 
 	  temp_gptra.assign(serial_data,separator_pos[2]+1 ,separator_pos[3]-separator_pos[2]-1);
-	  float gnss_pitch= stringToNum<float>(temp_gptra) / 180 * PI;
+	  double gnss_pitch= stringToNum<double>(temp_gptra) / 180 * PI;
 
 	  temp_gptra.assign(serial_data,separator_pos[3]+1 ,separator_pos[4]-separator_pos[3]-1);
-	  float gnss_roll= stringToNum<float>(temp_gptra) / 180 * PI;
+	  double gnss_roll= stringToNum<double>(temp_gptra) / 180 * PI;
 
 	  Eigen::Vector3d ea0(gnss_heading,gnss_pitch,gnss_roll);
       Eigen::Matrix3d R;
