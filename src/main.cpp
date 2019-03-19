@@ -137,7 +137,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		if(strcmp(temp_bestxyza.c_str(),"SOL_COMPUTED") == 0)
 		{
-			msg_navsatfix.status.status = 0;
+			msg_navsatfix.status.status = 1;
 		}else
 		{
 			msg_navsatfix.status.status = -1;
@@ -248,7 +248,8 @@ int main (int argc, char** argv) {
 	ros::NodeHandle nh; 
 	ros::NodeHandle param_nh("~");
 	string port;
-	int Baudrate,time_out,gpgga_freq,gptra_freq,bestxyza_freq;
+	int Baudrate,time_out;
+	float gpgga_freq,gptra_freq,bestxyza_freq;
 	bool gpgga_enable,gptra_enable,bestxyza_enable,Unlogall_enable;
 
 	param_nh.param("gnss_port",port,string("/dev/ttyUSB0"));
@@ -259,9 +260,9 @@ int main (int argc, char** argv) {
 	param_nh.param("gptra_enable",gptra_enable,true);
 	param_nh.param("bestxyza_enable",bestxyza_enable,true);
 	param_nh.param("Unlogall_enable",Unlogall_enable,false);
-	param_nh.param("gpgga_freq",gpgga_freq,1);
-	param_nh.param("gptra_freq",gptra_freq,1);
-	param_nh.param("bestxyza_freq",bestxyza_freq,1);
+	param_nh.param<float>("gpgga_freq",gpgga_freq,1);
+	param_nh.param<float>("gptra_freq",gptra_freq,1);
+	param_nh.param<float>("bestxyza_freq",bestxyza_freq,1);
 
 
 	// ros::Subscriber write_sub = nh.subscribe("writeToSerial", 1, writeCallback); 
@@ -344,7 +345,7 @@ int main (int argc, char** argv) {
 				gpggaManager(msg_gpgga,msg_gnssodometry,msg_navsatfix,vs[i]);
 			}
 
-			if(msg_navsatfix.status.status == 0){
+			if(msg_navsatfix.status.status == 1){
       
 				read_pub.publish(msg_gpgga);
 
