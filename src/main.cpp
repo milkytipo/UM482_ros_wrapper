@@ -125,12 +125,17 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		{			
 			separator_pos.push_back(serial_data.find(",",separator_pos[i-1]+1));
 		}
+
+		int header_separator  = serial_data.find(";",0);	
+
 		msg_gnssodometry.header.stamp = ros::Time::now();
 		msg_gnssodometry.header.frame_id = "gnss";
 
 		string temp_bestxyza;
-		temp_bestxyza.assign(serial_data,separator_pos[8]+1 ,separator_pos[9]-separator_pos[8]-1);  //x in ECEF
-		if(strcmp(temp_bestxyza.c_str(),"0;SOL_COMPUTED") == 0)
+		temp_bestxyza.assign(header_separator+1 ,separator_pos[9]-header_separator-1);  //x in ECEF
+
+
+		if(strcmp(temp_bestxyza.c_str(),"SOL_COMPUTED") == 0)
 		{
 			msg_navsatfix.status.status = 0;
 		}else

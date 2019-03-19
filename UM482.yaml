@@ -7,8 +7,8 @@ gptra_enable: true
 bestxyza_enable: true
 Unlogall_enable: false
 
-gpgga_freq: 1
-gptra_freq: 1
+gpgga_freq: 1  # 1/0.2/0.1
+gptra_freq: 1   
 bestxyza_freq: 1 
 
 
