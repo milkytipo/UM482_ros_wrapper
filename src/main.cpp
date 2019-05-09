@@ -132,7 +132,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		msg_gnssodometry.header.frame_id = "gnss";
 
 		string temp_bestxyza;
-		temp_bestxyza.assign(header_separator+1 ,separator_pos[9]-header_separator-1);  //x in ECEF
+		temp_bestxyza.assign(serial_data,header_separator+1 ,separator_pos[9]-header_separator-1);  //x in ECEF
 
 
 		if(strcmp(temp_bestxyza.c_str(),"SOL_COMPUTED") == 0)
