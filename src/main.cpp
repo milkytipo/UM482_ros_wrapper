@@ -95,6 +95,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		gpgga_msg.gps_qual = stringToNum<int>(temp_gpgga);//0初始化， 1单点定位， 2码差分， 3无效PPS， 4固定解， 5浮点解， 6正在估算 
 
 
+
 		temp_gpgga.assign(serial_data,separator_pos[6]+1 ,separator_pos[7]-separator_pos[6]-1);
 		gpgga_msg.num_sats = stringToNum<int>(temp_gpgga);	
 
@@ -119,7 +120,7 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 	}else if (strcmp(serialHeader.c_str(),ggaHeader[1].c_str()) == 0) //BESTXYZA
 	{
-		// cout << serialHeader.c_str() << endl;	
+		 //cout << serialHeader.c_str() << endl;	
 
 		for(int i=1;i<=bestxyza.totalCommas-1;i++)
 		{			
@@ -132,15 +133,16 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 		msg_gnssodometry.header.frame_id = "gnss";
 
 		string temp_bestxyza;
-		temp_bestxyza.assign(header_separator+1 ,separator_pos[9]-header_separator-1);  //x in ECEF
-
-
+		temp_bestxyza.assign(serial_data,header_separator+1 ,separator_pos[9]-header_separator-1);  //x in ECEF
+		
 		if(strcmp(temp_bestxyza.c_str(),"SOL_COMPUTED") == 0)
 		{
 			msg_navsatfix.status.status = 1;
+
 		}else
 		{
 			msg_navsatfix.status.status = -1;
+
 		}
 
 
@@ -252,17 +254,17 @@ int main (int argc, char** argv) {
 	float gpgga_freq,gptra_freq,bestxyza_freq;
 	bool gpgga_enable,gptra_enable,bestxyza_enable,Unlogall_enable;
 
-	param_nh.param("gnss_port",port,string("/dev/ttyUSB0"));
-	param_nh.param("gnss_Baudrate",Baudrate,115200);
-	param_nh.param("serial_timeout",time_out,10);
-	param_nh.param("serial_timeout",time_out,10);
-	param_nh.param("gpgga_enable",gpgga_enable,true);
-	param_nh.param("gptra_enable",gptra_enable,true);
-	param_nh.param("bestxyza_enable",bestxyza_enable,true);
-	param_nh.param("Unlogall_enable",Unlogall_enable,false);
-	param_nh.param<float>("gpgga_freq",gpgga_freq,1);
-	param_nh.param<float>("gptra_freq",gptra_freq,1);
-	param_nh.param<float>("bestxyza_freq",bestxyza_freq,1);
+	nh.param("gnss_port",port,string("/dev/um482"));
+	nh.param("gnss_Baudrate",Baudrate,115200);
+	nh.param("serial_timeout",time_out,10);
+	nh.param("serial_timeout",time_out,10);
+	nh.param("gpgga_enable",gpgga_enable,true);
+	nh.param("gptra_enable",gptra_enable,true);
+	nh.param("bestxyza_enable",bestxyza_enable,true);
+	nh.param("Unlogall_enable",Unlogall_enable,false);
+	nh.param<float>("gpgga_freq",gpgga_freq,1);
+	nh.param<float>("gptra_freq",gptra_freq,1);
+	nh.param<float>("bestxyza_freq",bestxyza_freq,1);
 
 
 	// ros::Subscriber write_sub = nh.subscribe("writeToSerial", 1, writeCallback); 
@@ -301,6 +303,7 @@ int main (int argc, char** argv) {
 	{	
 		cout << "GPGGA enable" << endl;
 	    ser.write("log com1 gpgga ontime "+numToString(gpgga_freq)+"\r\n"); //发送串口数据 
+			cout << "log com1 gpgga ontime "+numToString(gpgga_freq)+"\r\n" <<endl;
 	}
 
 	if(gptra_enable)
@@ -336,23 +339,26 @@ int main (int argc, char** argv) {
 
 			// cout<<"avali before read: "<<ser.available()<<endl;
 			vs = ser.readlines();
-			// cout<<"avali after read: "<<ser.available()<<endl;
-			// cout<<"read size: " << vs.size() <<endl;
+	//		 cout<<"avali after read: "<<ser.available()<<endl;
+	//		 cout<<"read size: " << vs.size() <<endl;
+			
 
 			for(int i = 0 ; i<vs.size(); i++)
 			{
 				// cout<<"read contents: " << vs[i] <<endl;
 				gpggaManager(msg_gpgga,msg_gnssodometry,msg_navsatfix,vs[i]);
+
 			}
 
 			if(msg_navsatfix.status.status == 1){
       
+
 				read_pub.publish(msg_gpgga);
 
        			read_pub2.publish(msg_gnssodometry); 
 
         		read_pub3.publish(msg_navsatfix);
-        	}
+       	}
 
 
 			ser.flush();

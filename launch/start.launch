@@ -1,9 +1,8 @@
 <launch>
-   <arg name = "gnss_port" default = "/dev/ttyS1"/>
+   <arg name = "gnss_port" default = "/dev/um482"/>
    <arg name = "gnss_module" default = "UM482"/>
    <arg name = "gnss_frame_id" default = "gnss"/>
-
-   <node name="gnssrtk_node" pkg = "um482_ros_wrapper" type= "gnssrtk_node" output="screen" >
+   <node name="gnss" pkg = "um482_ros_wrapper" type= "gnssrtk_node" output="screen" >
 	  <rosparam command = "load" file = "$(find um482_ros_wrapper)/$(arg gnss_module).yaml"/>
    </node>
 
