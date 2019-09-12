@@ -1,4 +1,4 @@
-gnss_port:  "/dev/ttyS1"
+gnss_port:  "/dev/um482"
 gnss_Baudrate: 115200
 
 
