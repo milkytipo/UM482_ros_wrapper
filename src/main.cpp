@@ -9,6 +9,7 @@
 #include <sstream>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <math.h>
 using namespace std;
 
 #define PI 3.141592653589793
@@ -28,7 +29,7 @@ string numToString (const Type &num)
 	stringstream ss;
 	string s;
 
-	ss << num;
+	ss << num; 
 	s = ss.str();
 	return s;
 }
@@ -81,13 +82,19 @@ void gpggaManager(nmea_msgs::Gpgga &gpgga_msg, nav_msgs::Odometry &msg_gnssodome
 
 		temp_gpgga.assign(serial_data,separator_pos[1]+1 ,separator_pos[2]-separator_pos[1]-1);
 		gpgga_msg.lat = stringToNum<double>(temp_gpgga);
-		msg_navsatfix.latitude = stringToNum<double>(temp_gpgga);
+		double temp = gpgga_msg.lat/100;
+		int integer = floor(temp);
+		double decimals =  temp - integer;
+        msg_navsatfix.latitude=integer + decimals/0.6;         
 
 		gpgga_msg.lat_dir = temp_gpgga.assign(serial_data,separator_pos[2]+1 ,separator_pos[3]-separator_pos[2]-1);
 
 		temp_gpgga.assign(serial_data,separator_pos[3]+1 ,separator_pos[4]-separator_pos[3]-1);
 		gpgga_msg.lon = stringToNum<double>(temp_gpgga);
-		msg_navsatfix.longitude = stringToNum<double>(temp_gpgga);
+		double temp = gpgga_msg.lon/100;
+		int integer = floor(temp);
+		double decimals =  temp - integer;
+        msg_navsatfix.longitude=integer + decimals/0.6;  
 
 		gpgga_msg.lon_dir = temp_gpgga.assign(serial_data,separator_pos[4]+1 ,separator_pos[5]-separator_pos[4]-1);
 
